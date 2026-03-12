@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaathGoal 🎯</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --r: #FF4D6D;
+    --b: #4CC9F0;
+    --g: #06D6A0;
+    --y: #FFD60A;
+    --dark: #0D0D0D;
+    --card: #1A1A2E;
+    --card2: #16213E;
+    --text: #F0F0F0;
+    --sub: #999;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Baloo 2', 'Noto Sans Devanagari', cursive;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG pattern */
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(255,77,109,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(76,201,240,0.08) 0%, transparent 50%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap { position:relative; z-index:1; max-width:480px; margin:0 auto; padding:16px; }
+
+  /* HEADER */
+  .header {
+    text-align:center;
+    padding: 24px 0 16px;
+  }
+  .logo {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--r), var(--y));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing:-1px;
+  }
+  .tagline { font-size:0.78rem; color:var(--sub); margin-top:4px; letter-spacing:1px; }
+
+  /* DATE PILL */
+  .date-pill {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background: rgba(255,214,10,0.12);
+    border: 1px solid rgba(255,214,10,0.3);
+    border-radius:20px;
+    padding: 5px 14px;
+    font-size:0.8rem;
+    color: var(--y);
+    margin: 8px auto;
+  }
+
+  /* SAVINGS BOARD */
+  .savings-board {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .savings-board::before {
+    content:'₹';
+    position:absolute;
+    right:-10px;
+    top:-20px;
+    font-size:8rem;
+    opacity:0.04;
+    font-weight:800;
+  }
+  .savings-title {
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    color:var(--sub);
+    margin-bottom:14px;
+  }
+  .players-row {
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:10px;
+  }
+  .player-card {
+    background: rgba(255,255,255,0.04);
+    border-radius:16px;
+    padding:14px 10px;
+    text-align:center;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+  }
+  .player-card.ritik { border-color: rgba(255,77,109,0.4); }
+  .player-card.ananya { border-color: rgba(76,201,240,0.4); }
+  .player-emoji { font-size:1.8rem; margin-bottom:4px; }
+  .player-name { font-size:0.72rem; color:var(--sub); margin-bottom:6px; }
+  .player-amount {
+    font-size:1.4rem;
+    font-weight:800;
+  }
+  .ritik .player-amount { color: var(--r); }
+  .ananya .player-amount { color: var(--b); }
+  .vs-badge {
+    background: rgba(255,214,10,0.15);
+    border: 1px solid rgba(255,214,10,0.4);
+    border-radius:50%;
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.7rem;
+    color:var(--y);
+    font-weight:700;
+  }
+  .pot-row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:14px;
+    padding-top:14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size:0.82rem;
+  }
+  .pot-label { color:var(--sub); }
+  .pot-val { color:var(--g); font-weight:700; font-size:1rem; }
+  .max-val { color:var(--sub); font-size:0.7rem; }
+
+  /* PROGRESS BAR */
+  .progress-section { margin: 4px 0 16px; }
+  .progress-label {
+    display:flex;
+    justify-content:space-between;
+    font-size:0.72rem;
+    color:var(--sub);
+    margin-bottom:6px;
+  }
+  .progress-bar {
+    height:6px;
+    background: rgba(255,255,255,0.06);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .progress-fill {
+    height:100%;
+    background: linear-gradient(90deg, var(--r), var(--y));
+    border-radius:10px;
+    transition: width 0.6s ease;
+  }
+
+  /* TABS */
+  .tabs {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin:16px 0;
+  }
+  .tab {
+    padding:10px;
+    border-radius:12px;
+    border:2px solid transparent;
+    background:var(--card);
+    color:var(--sub);
+    font-family:'Baloo 2', cursive;
+    font-size:0.82rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.25s;
+    text-align:center;
+  }
+  .tab.active-r { border-color:var(--r); color:var(--r); background:rgba(255,77,109,0.1); }
+  .tab.active-b { border-color:var(--b); color:var(--b); background:rgba(76,201,240,0.1); }
+
+  /* PANEL */
+  .panel { display:none; }
+  .panel.show { display:block; }
+
+  /* TODAY CARD */
+  .today-card {
+    background:var(--card);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:12px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .today-card h3 {
+    font-size:0.82rem;
+    color:var(--sub);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .plan-input {
+    width:100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius:12px;
+    padding:12px 14px;
+    color:var(--text);
+    font-family:'Baloo 2', 'Noto Sans Devanagari', cursive;
+    font-size:0.85rem;
+    resize:none;
+    min-height:100px;
+    transition:border 0.2s;
+    outline:none;
+  }
+  .plan-input:focus { border-color: rgba(255,214,10,0.4); }
+  .plan-input::placeholder { color:rgba(255,255,255,0.25); }
+
+  .char-count { text-align:right; font-size:0.7rem; color:var(--sub); margin-top:4px; }
+
+  /* STATUS BADGE */
+  .status-row {
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+  .status-btn {
+    flex:1;
+    padding:10px 8px;
+    border-radius:12px;
+    border:2px solid transparent;
+    background:rgba(255,255,255,0.04);
+    color:var(--sub);
+    font-family:'Baloo 2', cursive;
+    font-size:0.8rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:all 0.2s;
+    min-width:80px;
+  }
+  .status-btn.win { border-color:var(--g); color:var(--g); background:rgba(6,214,160,0.1); }
+  .status-btn.lose { border-color:var(--r); color:var(--r); background:rgba(255,77,109,0.1); }
+
+  /* ACTION BTN */
+  .btn-main {
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:none;
+    font-family:'Baloo 2', cursive;
+    font-size:0.95rem;
+    font-weight:800;
+    cursor:pointer;
+    letter-spacing:0.5px;
+    transition:all 0.2s;
+    margin-top:10px;
+  }
+  .btn-r { background:linear-gradient(135deg, var(--r), #c9184a); color:#fff; }
+  .btn-b { background:linear-gradient(135deg, var(--b), #4361ee); color:#fff; }
+  .btn-main:hover { opacity:0.9; transform:translateY(-1px); }
+  .btn-main:active { transform:translateY(0); }
+
+  /* HISTORY */
+  .history-list { display:flex; flex-direction:column; gap:8px; }
+  .history-item {
+    background:var(--card);
+    border-radius:14px;
+    padding:14px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .hist-icon {
+    font-size:1.2rem;
+    min-width:28px;
+    text-align:center;
+    margin-top:2px;
+  }
+  .hist-content { flex:1; }
+  .hist-date { font-size:0.68rem; color:var(--sub); margin-bottom:2px; }
+  .hist-text { font-size:0.82rem; line-height:1.4; }
+  .hist-result {
+    font-size:0.7rem;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:8px;
+    margin-top:4px;
+    display:inline-block;
+  }
+  .hist-result.w { background:rgba(6,214,160,0.15); color:var(--g); }
+  .hist-result.l { background:rgba(255,77,109,0.15); color:var(--r); }
+  .hist-result.p { background:rgba(255,214,10,0.15); color:var(--y); }
+
+  /* RULES */
+  .rules-card {
+    background:var(--card);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:12px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .rules-card h3 {
+    font-size:0.9rem;
+    font-weight:700;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .rule-item {
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+    font-size:0.82rem;
+    line-height:1.5;
+    color:rgba(240,240,240,0.85);
+  }
+  .rule-num {
+    min-width:22px;
+    height:22px;
+    background:rgba(255,214,10,0.15);
+    border:1px solid rgba(255,214,10,0.3);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.68rem;
+    color:var(--y);
+    font-weight:700;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+
+  /* MONEY TIMELINE */
+  .timeline-card {
+    background: linear-gradient(135deg, rgba(6,214,160,0.08), rgba(76,201,240,0.08));
+    border: 1px solid rgba(6,214,160,0.2);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:12px;
+  }
+  .timeline-card h3 {
+    font-size:0.82rem;
+    color:var(--g);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:12px;
+  }
+  .month-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+  }
+  .month-item {
+    background:rgba(255,255,255,0.04);
+    border-radius:10px;
+    padding:8px 6px;
+    text-align:center;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .month-name { font-size:0.65rem; color:var(--sub); }
+  .month-amt { font-size:0.85rem; font-weight:700; color:var(--g); }
+  .month-running { font-size:0.62rem; color:rgba(255,255,255,0.3); }
+
+  /* TOAST */
+  .toast {
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%) translateY(100px);
+    background:#222;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:14px;
+    padding:12px 20px;
+    font-size:0.85rem;
+    font-weight:600;
+    z-index:999;
+    transition:transform 0.3s ease;
+    white-space:nowrap;
+  }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+
+  /* PROOF BADGE */
+  .proof-tag {
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:0.7rem;
+    background:rgba(255,214,10,0.1);
+    border:1px solid rgba(255,214,10,0.3);
+    border-radius:8px;
+    padding:3px 8px;
+    color:var(--y);
+    margin-top:6px;
+  }
+
+  /* ACCOUNT TIP */
+  .tip-card {
+    background:rgba(76,201,240,0.06);
+    border:1px solid rgba(76,201,240,0.2);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:12px;
+  }
+  .tip-card h4 { color:var(--b); font-size:0.85rem; margin-bottom:8px; }
+  .tip-card p { font-size:0.78rem; color:rgba(240,240,240,0.8); line-height:1.5; }
+  .tip-card a { color:var(--b); text-decoration:none; }
+
+  /* Empty state */
+  .empty-state {
+    text-align:center;
+    padding:32px 16px;
+    color:var(--sub);
+    font-size:0.82rem;
+  }
+  .empty-state .big { font-size:2rem; margin-bottom:8px; }
+
+  .section-sep {
+    height:1px;
+    background:rgba(255,255,255,0.05);
+    margin:16px 0;
+  }
+
+  @keyframes pulse {
+    0%,100% { transform:scale(1); }
+    50% { transform:scale(1.05); }
+  }
+  .pulse { animation:pulse 2s infinite; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">🎯 SaathGoal</div>
+    <div class="tagline">TERI BAAT. MERA KAAM. REAL MONEY.</div>
+    <div style="margin-top:8px;">
+      <span class="date-pill">📅 <span id="todayDate"></span></span>
+    </div>
+  </div>
+
+  <!-- SAVINGS BOARD -->
+  <div class="savings-board">
+    <div class="savings-title">💰 Savings Scoreboard</div>
+    <div class="players-row">
+      <div class="player-card ritik">
+        <div class="player-emoji">🏸</div>
+        <div class="player-name">Ritik</div>
+        <div class="player-amount" id="ritikAmt">₹0</div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="player-card ananya">
+        <div class="player-emoji">👗</div>
+        <div class="player-name">Ananya</div>
+        <div class="player-amount" id="ananyaAmt">₹0</div>
+      </div>
+    </div>
+    <div class="pot-row">
+      <span class="pot-label">Total Savings Pool</span>
+      <span>
+        <span class="pot-val" id="totalAmt">₹0</span>
+        <span class="max-val"> / ₹6,750</span>
+      </span>
+    </div>
+    <div class="progress-section" style="margin-top:10px;margin-bottom:0">
+      <div class="progress-label">
+        <span>Progress</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active-r" onclick="switchTab('ritik')">🏸 Ritik ka Din</button>
+    <button class="tab" onclick="switchTab('ananya')" id="tab2">👗 Ananya ka Din</button>
+  </div>
+
+  <!-- RITIK PANEL -->
+  <div class="panel show" id="panel-ritik">
+    <div class="today-card">
+      <h3>🏸 Aaj ka Plan likho — Ritik</h3>
+      <textarea class="plan-input" id="ritikPlan" placeholder="Aaj kya karne ka plan hai? Detail me likho...&#10;&#10;Ex: 11th ka admission form fill karna, 2 coaches se KhelConnect ke baare mein baat karni hai, badminton practice 6-8pm..." maxlength="500" oninput="updateChar('ritikPlan','ritikChar')"></textarea>
+      <div class="char-count"><span id="ritikChar">0</span>/500</div>
+      
+      <div class="section-sep"></div>
+      
+      <h3>✅ Kaam ho gaya? (Proof ke saath)</h3>
+      <textarea class="plan-input" id="ritikProof" placeholder="Kya kiya aaj? Proof de (screenshot description, kya hua, etc)..." maxlength="400" style="min-height:70px" oninput="updateChar('ritikProof','ritikProofChar')"></textarea>
+      <div class="char-count"><span id="ritikProofChar">0</span>/400</div>
+      
+      <div class="status-row">
+        <button class="status-btn" id="rWin" onclick="setStatus('r','win')">✅ Kaam Kiya</button>
+        <button class="status-btn" id="rLose" onclick="setStatus('r','lose')">❌ Nahi Hua</button>
+      </div>
+      
+      <button class="btn-main btn-r" onclick="savePlan('ritik')">💾 Save Ritik ka Din</button>
+    </div>
+  </div>
+
+  <!-- ANANYA PANEL -->
+  <div class="panel" id="panel-ananya">
+    <div class="today-card">
+      <h3>👗 Aaj ka Plan likho — Ananya</h3>
+      <textarea class="plan-input" id="ananyaPlan" placeholder="Aaj kya karne ka plan hai? Detail me likho...&#10;&#10;Ex: Instagram ke liye 2 reels shoot karni hain, outfit coordination photos leni hain..." maxlength="500" oninput="updateChar('ananyaPlan','ananyaChar')"></textarea>
+      <div class="char-count"><span id="ananyaChar">0</span>/500</div>
+      
+      <div class="section-sep"></div>
+      
+      <h3>✅ Kaam ho gaya? (Proof ke saath)</h3>
+      <textarea class="plan-input" id="ananyaProof" placeholder="Kya kiya aaj? Proof de (screenshot description, kya hua, etc)..." maxlength="400" style="min-height:70px" oninput="updateChar('ananyaProof','ananyaProofChar')"></textarea>
+      <div class="char-count"><span id="ananyaProofChar">0</span>/400</div>
+      
+      <div class="status-row">
+        <button class="status-btn" id="aWin" onclick="setStatus('a','win')">✅ Kaam Kiya</button>
+        <button class="status-btn" id="aLose" onclick="setStatus('a','lose')">❌ Nahi Hua</button>
+      </div>
+      
+      <button class="btn-main btn-b" onclick="savePlan('ananya')">💾 Save Ananya ka Din</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div style="margin:16px 0 8px;">
+    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--sub);">📜 Pichle Dino ki History</div>
+  </div>
+  <div class="history-list" id="historyList">
+    <div class="empty-state">
+      <div class="big">📭</div>
+      Abhi koi history nahi hai.<br>Aaj ka pehla din shuru karo!
+    </div>
+  </div>
+
+  <!-- MONEY TIMELINE -->
+  <div style="margin:20px 0 8px;">
+    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--sub);">📅 Monthly Money Plan</div>
+  </div>
+  <div class="timeline-card">
+    <h3>💵 Paise ka Schedule (15 April → 15 Jan 2027)</h3>
+    <div class="month-grid" id="monthGrid"></div>
+    <div style="margin-top:12px;font-size:0.75rem;color:rgba(255,255,255,0.4);line-height:1.6;">
+      Har mahine 1500₹ pool me add hoga.<br>
+      15 January 2027 ko total barabar baant diya jayega.<br>
+      <strong style="color:var(--g)">Max possible: ₹6,750 each (agar dono roz jeeten)</strong>
+    </div>
+  </div>
+
+  <!-- ACCOUNT TIP -->
+  <div class="tip-card">
+    <h4>🏦 Account nahi hai? Karo ye kaam</h4>
+    <p>
+      <strong>Option 1 — Paytm Payments Bank:</strong> Zero balance, Aadhaar se 5 min mein open hota hai. Dono ke liye alag alag.<br><br>
+      <strong>Option 2 — Jupiter / Fi Money:</strong> Student-friendly, no min balance, UPI ready.<br><br>
+      <strong>Option 3 — Ek notebook mein virtual track karo</strong> jab tak real account na khule. Yahi app use karo tracking ke liye.
+    </p>
+  </div>
+
+  <!-- RULES -->
+  <div style="margin:16px 0 8px;">
+    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--sub);">📋 Game ke Rules</div>
+  </div>
+  <div class="rules-card">
+    <h3>🎮 SaathGoal Rules</h3>
+    <div class="rule-item"><div class="rule-num">1</div><div>Raat ko sone se pehle — dono apna agle din ka <strong>detailed plan</strong> likho is app mein.</div></div>
+    <div class="rule-item"><div class="rule-num">2</div><div>Agle din kaam pura karo, phir raat ko <strong>proof ke saath</strong> batao ki hua ya nahi.</div></div>
+    <div class="rule-item"><div class="rule-num">3</div><div>Dono jeet gaye → <strong>Dono ke account mein ₹25 add</strong> hoga.</div></div>
+    <div class="rule-item"><div class="rule-num">4</div><div>Ek jeeta, ek haara → <strong>Haarne waale ka ₹25 jeetnewale ko</strong> milega (no daily credit for loser).</div></div>
+    <div class="rule-item"><div class="rule-num">5</div><div>Jo haara → us din jeetnewale ki <strong>ek baat manni hogi</strong> (reasonable wali 😅).</div></div>
+    <div class="rule-item"><div class="rule-num">6</div><div>Har <strong>15 tarikh</strong> ko pool mein fresh ₹1500 add hoga (April se December 2024).</div></div>
+    <div class="rule-item"><div class="rule-num">7</div><div><strong>15 January 2027</strong> ko total amount dono mein baant diya jayega jitna jitna kisi ne jeeta ho.</div></div>
+    <div class="rule-item"><div class="rule-num">8</div><div><strong>Max possible:</strong> ₹6,750 ek person ke liye agar rozana jeete.</div></div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// STATE
+let state = JSON.parse(localStorage.getItem('saathgoal') || '{}');
+if(!state.ritikSavings) state.ritikSavings = 0;
+if(!state.ananyaSavings) state.ananyaSavings = 0;
+if(!state.history) state.history = [];
+if(!state.rStatus) state.rStatus = null;
+if(!state.aStatus) state.aStatus = null;
+if(!state.lastDate) state.lastDate = '';
+
+// Current tab tracking
+let currentPlayer = 'ritik';
+
+function save() {
+  localStorage.setItem('saathgoal', JSON.stringify(state));
+}
+
+function showToast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+// Date
+function getToday() {
+  return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+document.getElementById('todayDate').textContent = getToday();
+
+// Char count
+function updateChar(inputId, countId) {
+  document.getElementById(countId).textContent = document.getElementById(inputId).value.length;
+}
+
+// Tab switch
+function switchTab(player) {
+  currentPlayer = player;
+  document.getElementById('panel-ritik').classList.remove('show');
+  document.getElementById('panel-ananya').classList.remove('show');
+  document.getElementById(`panel-${player}`).classList.add('show');
+
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.remove('active-r','active-b');
+  });
+  if(player==='ritik') {
+    document.querySelectorAll('.tab')[0].classList.add('active-r');
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active-b');
+  }
+}
+
+// Status selection
+function setStatus(who, result) {
+  if(who==='r') {
+    state.rStatus = result;
+    document.getElementById('rWin').className = result==='win' ? 'status-btn win' : 'status-btn';
+    document.getElementById('rLose').className = result==='lose' ? 'status-btn lose' : 'status-btn';
+  } else {
+    state.aStatus = result;
+    document.getElementById('aWin').className = result==='win' ? 'status-btn win' : 'status-btn';
+    document.getElementById('aLose').className = result==='lose' ? 'status-btn lose' : 'status-btn';
+  }
+}
+
+// Save plan
+function savePlan(player) {
+  const planField = player==='ritik' ? 'ritikPlan' : 'ananyaPlan';
+  const proofField = player==='ritik' ? 'ritikProof' : 'ananyaProof';
+  const plan = document.getElementById(planField).value.trim();
+  const proof = document.getElementById(proofField).value.trim();
+  
+  if(!plan) { showToast('⚠️ Pehle plan likho!'); return; }
+
+  const today = getToday();
+  const rSt = state.rStatus;
+  const aSt = state.aStatus;
+
+  // Calculate money only if both have status
+  if(proof && rSt && aSt) {
+    // Both submitted
+    let rEarn = 0, aEarn = 0;
+    if(rSt==='win' && aSt==='win') { rEarn=25; aEarn=25; }
+    else if(rSt==='win' && aSt==='lose') { rEarn=50; aEarn=0; } // winner gets loser's 25 too
+    else if(rSt==='lose' && aSt==='win') { rEarn=0; aEarn=50; }
+    else { rEarn=0; aEarn=0; }
+    
+    state.ritikSavings += rEarn;
+    state.ananyaSavings += aEarn;
+
+    // Add to history
+    let resultLabel = '';
+    if(rSt==='win'&&aSt==='win') resultLabel='both';
+    else if(rSt==='win') resultLabel='ritik';
+    else if(aSt==='win') resultLabel='ananya';
+    else resultLabel='none';
+
+    state.history.unshift({
+      date: today,
+      ritikPlan: document.getElementById('ritikPlan').value,
+      ananyaPlan: document.getElementById('ananyaPlan').value,
+      ritikProof: document.getElementById('ritikProof').value,
+      ananyaProof: document.getElementById('ananyaProof').value,
+      rResult: rSt,
+      aResult: aSt,
+      winner: resultLabel,
+      rEarned: rEarn,
+      aEarned: aEarn
+    });
+
+    state.rStatus = null; state.aStatus = null;
+    document.getElementById('ritikPlan').value='';
+    document.getElementById('ananyaPlan').value='';
+    document.getElementById('ritikProof').value='';
+    document.getElementById('ananyaProof').value='';
+    ['ritikChar','ananyaChar','ritikProofChar','ananyaProofChar'].forEach(id=>document.getElementById(id).textContent='0');
+    ['rWin','rLose','aWin','aLose'].forEach(id=>document.getElementById(id).className='status-btn');
+
+    save();
+    updateUI();
+    showToast(resultLabel==='both' ? '🎉 Dono jeet gaye! +₹25 each!' : `🏆 ${resultLabel==='ritik'?'Ritik':'Ananya'} jeet gaya/gayi!`, 3000);
+  } else {
+    // Just saving plan/partial
+    save();
+    showToast(`✅ ${player==='ritik'?'Ritik':'Ananya'} ka plan save ho gaya!`);
+  }
+}
+
+// Update UI
+function updateUI() {
+  document.getElementById('ritikAmt').textContent = `₹${state.ritikSavings}`;
+  document.getElementById('ananyaAmt').textContent = `₹${state.ananyaSavings}`;
+  const total = state.ritikSavings + state.ananyaSavings;
+  document.getElementById('totalAmt').textContent = `₹${total}`;
+  const pct = Math.min(100, Math.round(total/13500*100));
+  document.getElementById('progressPct').textContent = `${pct}%`;
+  document.getElementById('progressFill').style.width = `${pct}%`;
+  renderHistory();
+}
+
+// Render history
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if(!state.history.length) {
+    list.innerHTML = `<div class="empty-state"><div class="big">📭</div>Abhi koi history nahi hai.<br>Aaj ka pehla din shuru karo!</div>`;
+    return;
+  }
+
+  list.innerHTML = state.history.slice(0,15).map(h => {
+    const rIcon = h.rResult==='win'?'✅':'❌';
+    const aIcon = h.aResult==='win'?'✅':'❌';
+    const wLabel = h.winner==='both'?'🎉 Dono jeete': h.winner==='ritik'?'🏆 Ritik jeeta': h.winner==='ananya'?'🏆 Ananya jeeti':'😬 Dono hare';
+    const wClass = h.winner==='both'||h.winner!=='none'?'w':'l';
+    return `
+    <div class="history-item">
+      <div class="hist-icon">${h.winner==='both'?'🎯':h.winner==='none'?'😬':'🏆'}</div>
+      <div class="hist-content">
+        <div class="hist-date">📅 ${h.date}</div>
+        <div class="hist-text">
+          ${rIcon} <strong>Ritik:</strong> ${h.ritikPlan?.substring(0,60)||'—'}${h.ritikPlan?.length>60?'...':''}<br>
+          ${aIcon} <strong>Ananya:</strong> ${h.ananyaPlan?.substring(0,60)||'—'}${h.ananyaPlan?.length>60?'...':''}
+        </div>
+        <span class="hist-result ${wClass}">${wLabel} | R:+₹${h.rEarned||0} A:+₹${h.aEarned||0}</span>
+        ${h.ritikProof||h.ananyaProof?`<div class="proof-tag">📸 Proof submitted</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Month grid
+function renderMonthGrid() {
+  const months = ['April','May','June','July','Aug','Sep','Oct','Nov','Dec'];
+  let running = 1500;
+  document.getElementById('monthGrid').innerHTML = months.map((m,i)=>{
+    const amt = 1500*(i+1);
+    return `<div class="month-item">
+      <div class="month-name">${m}</div>
+      <div class="month-amt">₹1,500</div>
+      <div class="month-running">Pool: ₹${amt.toLocaleString('en-IN')}</div>
+    </div>`;
+  }).join('');
+}
+
+// Init
+renderMonthGrid();
+updateUI();
+
+// Restore status buttons if needed
+if(state.rStatus) setStatus('r',state.rStatus);
+if(state.aStatus) setStatus('a',state.aStatus);
+</script>
+</body>
+</html>
